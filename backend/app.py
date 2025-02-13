@@ -4,6 +4,7 @@ from model import ObjectDetector
 from flask_cors import CORS
 import time
 from werkzeug.utils import secure_filename
+import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -17,6 +18,13 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 # Create folders if they don't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Configure maximum content length
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
 # Initialize the object detector
 detector = ObjectDetector()
@@ -78,6 +86,7 @@ def detect():
         return jsonify(result)
 
     except Exception as e:
+        logger.error(f"Error in detect endpoint: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
     finally:
@@ -93,6 +102,7 @@ def output(filename):
             return jsonify({"error": "File not found"}), 404
         return send_file(image_path, mimetype="image/jpeg")
     except Exception as e:
+        logger.error(f"Error in output endpoint: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 def cleanup_old_files(max_age_hours=1):
@@ -106,7 +116,7 @@ def cleanup_old_files(max_age_hours=1):
                 if file_age > max_age_hours * 3600:
                     os.remove(filepath)
     except Exception as e:
-        print(f"Error during cleanup: {str(e)}")
+        logger.error(f"Error during cleanup: {str(e)}")
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
@@ -131,12 +141,13 @@ def health_check():
     })
 
 if __name__ == '__main__':
-    # Set up basic logging
-    import logging
-    logging.basicConfig(level=logging.INFO)
+    # Get port from environment variable for Render deployment
+    port = int(os.environ.get('PORT', 5000))
     
-    # Increase maximum content length
-    app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
-    
-    # Run the app
-    app.run(debug=True)
+    # Set environment-specific configurations
+    if os.environ.get('RENDER') == 'true':
+        # Production settings
+        app.run(host='0.0.0.0', port=port)
+    else:
+        # Development settings
+        app.run(host='0.0.0.0', port=port, debug=True)
