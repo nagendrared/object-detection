@@ -79,6 +79,23 @@ npm run dev
 
 ---
 
+## 📸 Screenshots
+
+Here are a few screenshots showcasing the **Object Detection Web Application**:
+
+### 🖼️ UI Interface
+User-friendly interface for uploading images, triggering detection, and viewing results.
+
+![Screenshot 2025-06-27 122902](https://github.com/user-attachments/assets/a7a51f6d-52c4-49ab-ac67-0cb82a9eaef4)
+
+
+### 🧠 Detection Output
+Detected objects with bounding boxes, class labels, and confidence scores.
+
+![Screenshot 2025-06-27 122945](https://github.com/user-attachments/assets/557ed870-1f61-43c7-9bd3-b02abc04e781)
+
+
+
 ## API Endpoints
 
 ### POST `/detect`
