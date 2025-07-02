@@ -90,6 +90,7 @@ User-friendly interface for uploading images, triggering detection, and viewing 
 
 ### 📷 Image Upload & Camera Capture
 Screenshot of drag & drop area, file upload, and live camera capture interface.
+
 ![image](https://github.com/user-attachments/assets/c1e9c207-54c0-47b5-a2a4-96acdd6b7685)
 
 
